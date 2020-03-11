@@ -1,0 +1,67 @@
+Partier = [   
+    {
+        "namn" : "Gröngöligarna",
+        "partiledare" : "Karl Johansson",
+        "inrikting" : "Vänster",
+        "block" : "Småpartierna",
+        "min_röst" : 3,
+        "max_röst" : 12,
+    },
+        {
+        "namn" : "Partikelpartiet",
+        "partiledare" : "Torbjörn Wahlborg",
+        "inrikting" : "Vänster",
+        "block" : "Småpartierna",
+        "min_röst" : 2,
+        "max_röst" : 8,
+    },
+        {
+        "namn" : "Mälarpartiet",
+        "partiledare" : "Mikael Danielsson",
+        "inrikting" : "Höger",
+        "block" : "Småpartierna",
+        "min_röst" : 8,
+        "max_röst" : 18,
+    },
+        {
+        "namn" : "Sjörövarpartiet",
+        "partiledare" : "Christer Petersson",
+        "inrikting" : "Höger",
+        "block" : "Småpartierna",
+        "min_röst" : 3,
+        "max_röst" : 12,
+    },
+        {
+        "namn" : "Extremisterna",
+        "partiledare" : "Björn Lindström",
+        "inrikting" : "Höger",
+        "block" : "Oljeblocket",
+        "min_röst" : 3,
+        "max_röst" : 6,
+    },
+        {
+        "namn" : "Maskinpartiet",
+        "partiledare" : "Anton Rosengren",
+        "block" : "Oljeblocket",
+        "inrikting" : "Vänster",
+        "min_röst" : 12,
+        "max_röst" : 22,
+    },
+        {
+        "namn" : "Framtidspartiet",
+        "partiledare" : "Daniel Pettersson",
+        "inrikting" : "Höger",
+        "block" : "Oljeblocket",
+        "min_röst" : 12,
+        "max_röst" : 18,
+    },
+        {
+        "namn" : "Allpartiet",
+        "partiledare" : "Erik Svensson",
+        "inrikting" : "Vänster",
+        "block" : "Inget",
+        "min_röst" : 20,
+        "max_röst" : 34,    
+    }]
+
+
