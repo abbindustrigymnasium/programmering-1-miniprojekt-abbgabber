@@ -16,13 +16,9 @@ För att göra sidan mindre tom så finns det också en bild på spelarens avata
 #### ex. Hypixel API : https://api.hypixel.net/player?key=d4eaf4e7-23aa-4196-9440-fe9af430f614&name=Stranght
 #### ex Slothpixel API : https://api.slothpixel.me/api/skyblock/profile/Stranght/23a72998770e4614b230a15a282c967e
 
-
-### W.I.P Preview
-![Preview](https://i.gyazo.com/ab4aa31a70a7f64dfa2498e12c698021.jpg)
-
 #### Items i spelet
 ![items](https://i.gyazo.com/7f3d489ceece92c5b9ecda38fcc1b74c.png)
 
 ## Syfte
 
-Syftet är att jag ska bli bättre på att använda mig utav API:er och hur de kan användes i ett mer generellt syfte. 
+Syftet är att jag ska bli bättre på att använda mig utav API:er och hur de kan användes i ett mer generellt syfte. Det utöker även mitt förstående i flera olika språk eftersom att jag inte är särskilt insatt i hur ren HTML fungerar eftersom att jag endast har använt mig utav libraries t.ex. React och Vue.
