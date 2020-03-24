@@ -56,12 +56,11 @@
     }
   };
 
-  function getstats(makebuttons) {
+  function getstats(value) {
     name = document.getElementById("name").value;
     yourprofiles = "";
     playerprofiles = [];
     let profiles = {};
-    value = makebuttons;
     fetch(
       "https://api.hypixel.net/player?key=d4eaf4e7-23aa-4196-9440-fe9af430f614&name=" +
         name
