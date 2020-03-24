@@ -1,4 +1,6 @@
 # HypixelAPI
+### W.I.P Preview
+![Preview](https://i.gyazo.com/ab4aa31a70a7f64dfa2498e12c698021.jpg)
 
 ## Projektet
 
