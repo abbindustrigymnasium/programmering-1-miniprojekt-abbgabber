@@ -235,7 +235,7 @@
                 let pprof = document.createElement("p");
                 pprof.innerHTML = weapon.substring(2);
                 armour.appendChild(pprof);
-                source = "assets/resources/" + weapons + ".png";
+                source = "assets/resources/" + weapons.toLowerCase() + ".png";
                 let image = document.createElement("img");
                 image.src = source;
                 armour.appendChild(image);
