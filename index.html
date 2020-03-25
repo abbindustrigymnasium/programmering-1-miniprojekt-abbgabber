@@ -206,7 +206,8 @@
                   // Adds the Icon of the Item inside a square
                   armourimg = document.getElementById(armor[x].attributes.id);
                   gear = armor[x].attributes.id;
-                  gearsource = "assets/resources/" + gear + ".png";
+                  gearsource =
+                    "assets/resources/" + gear.toLowerCase() + ".png";
                   // console.log(gearsource);
                   let image = document.createElement("img");
                   image.id = "armoricon";
