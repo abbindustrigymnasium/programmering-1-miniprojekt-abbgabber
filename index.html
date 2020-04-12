@@ -35,18 +35,19 @@
       <div id="infocard">
         <div id="purseinfo"></div>
         <div id="bankinfo"></div>
+        <div id="averagelevel"></div>
       </div>
       <div id="skills"></div>
       <div id="profiles"></div>
-      <div style="position:relative; left:700px; top:200px;">
-        <p id="rank"></p>
-        <select id="profilebutton" onChange="getstats()"></select>
-        <div id="playersinprofile"></div>
+      <div style="position: relative; left: 700px; top: 200px;">
+        <p id="rank" class="text"></p>
+        <select id="profilebutton" onChange="getstats()" class="text"></select>
+        <div id="playersinprofile" class="text"></div>
         <div id="playermodel"></div>
         <div id="armor"></div>
-        <span>
+        <!-- <span>
           Special Thanks to Bingepoodle for beta testing!
-        </span>
+        </span> -->
       </div>
     </div>
   </body>
@@ -54,7 +55,7 @@
 
 <script>
   //Performs getstats when pressing enter in the name input
-  document.getElementById("name").onkeydown = function(event) {
+  document.getElementById("name").onkeydown = function (event) {
     if (event.keyCode == 13) {
       getstats(1);
     }
@@ -69,17 +70,17 @@
       "https://api.hypixel.net/player?key=d4eaf4e7-23aa-4196-9440-fe9af430f614&name=" +
         name
     )
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         if (data.player !== null) {
           let src = document.getElementById("playermodel");
           let playersinprofile = document.getElementById("playersinprofile");
           let profilebutton = document.getElementById("profilebutton");
+
           playersinprofile.innerHTML = "";
           src.innerHTML = "";
-          // console.log(value)
 
           // Adds the Model of the Player
           playeruuid = data.player.uuid;
@@ -128,6 +129,7 @@
                 option.innerHTML = cuteNames;
                 option.id = profileid;
                 profilebutton.appendChild(option);
+                events();
               }
               findProfileMembers();
               getPlayerItems();
@@ -139,11 +141,10 @@
           console.log("Unable to find Profile");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error:" + error);
       });
   }
-
   function findProfileMembers() {
     let ProfileName = cuteNames;
     let profilevalue = document.getElementById("profilebutton");
@@ -151,11 +152,10 @@
     fetch(
       "https://api.slothpixel.me/api/skyblock/profile/" + name + "/" + profileid
     )
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(data => {
-        // console.log(data.members);
+      .then((data) => {
         for (i in data.members) {
           profilemembers = data.members[i].player.username;
           if (name.toLowerCase() !== profilemembers.toLowerCase()) {
@@ -176,18 +176,15 @@
     fetch(
       "https://api.slothpixel.me/api/skyblock/profile/" + name + "/" + profileid
     )
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         for (i in data.members) {
           profilemembers = data.members[i].player.username;
-          // console.log(profilemembers);
           if (name.toLowerCase() == profilemembers.toLowerCase()) {
             if (ProfileName == profilevalue.value) {
               armor = data.members[i].armor;
-              console.log(armor);
-              // console.log(armor);
 
               for (var x = armor.length - 1; 0 <= x; x--) {
                 if (armor[x].name !== undefined) {
@@ -198,7 +195,6 @@
                     .substring(4)
                     .split(" ")[0]
                     .toLowerCase();
-                  // console.log(rarity);
                   pprof.className = "piece" + " " + rarity;
                   pprof.id = armor[x].attributes.id;
                   armour.appendChild(pprof);
@@ -208,7 +204,6 @@
                   gear = armor[x].attributes.id;
                   gearsource =
                     "assets/resources/" + gear.toLowerCase() + ".png";
-                  // console.log(gearsource);
                   let image = document.createElement("img");
                   image.id = "armoricon";
                   image.style = "float:left";
@@ -219,6 +214,7 @@
                   for (y in armor[x].lore) {
                     let loretext = document.createElement("p");
                     loretext.id = "lore";
+                    // console.log(armor[x].lore[y].split("§"));
                     loretext.innerHTML = armor[x].lore[y];
                     armourimg.appendChild(loretext);
                   }
@@ -230,15 +226,49 @@
               }
               // Adds the Item of the first slot to the page
               if (data.members[i].inventory !== null) {
-                weapon = data.members[i].inventory[0].name;
-                weapons = data.members[i].inventory[0].attributes.id;
-                let pprof = document.createElement("p");
-                pprof.innerHTML = weapon.substring(2);
-                armour.appendChild(pprof);
-                source = "assets/resources/" + weapons.toLowerCase() + ".png";
-                let image = document.createElement("img");
-                image.src = source;
-                armour.appendChild(image);
+                // for (k in data.members[i].inventory) {
+                // if (
+                //   data.members[i].inventory[k].hasOwnProperty("attributes")
+                // ) {
+                //   console.log(data.members[i].inventory);
+                //   weapon = data.members[i].inventory[k];
+                //Deactivate
+                weapon = data.members[i].inventory[0];
+
+                let weapp = document.createElement("p");
+                let rarity = weapon.lore
+                  .slice(-1)[0]
+                  .substring(4)
+                  .split(" ")[0]
+                  .toLowerCase();
+                weapp.className = "piece" + " " + rarity;
+                weapp.id = weapon.attributes.id;
+
+                armour.appendChild(weapp);
+
+                let weaponimg = document.getElementById(weapon.attributes.id);
+                yourweapon = weapon.attributes.id;
+                weaponsource =
+                  "assets/resources/" + yourweapon.toLowerCase() + ".png";
+                let wimage = document.createElement("img");
+                wimage.id = "armoricon";
+                wimage.style = "float:left";
+                wimage.src = weaponsource;
+                weaponimg.appendChild(wimage);
+
+                for (y in weapon.lore) {
+                  let loretext = document.createElement("p");
+                  loretext.id = weapon.lore[y].slice(0, 5);
+                  loretext.innerHTML = weapon.lore[y];
+                  weaponimg.appendChild(loretext);
+                  // console.log(loretext);
+                }
+                let itemname = document.createElement("p");
+                itemname.id = "lore";
+                itemname.innerHTML = weapon.name.substring(2);
+                armourimg.appendChild(itemname);
+                //   }
+                // }
               } else {
                 let pprof = document.createElement("p");
                 pprof.innerHTML = "Enable inventory in the API to view weapons";
@@ -252,14 +282,13 @@
                 coins = coins.join(",");
                 coins = reverseString(coins);
 
-                // console.log(data.members[i].coin_purse)
                 let purseinfo = document.getElementById("purseinfo");
                 purseinfo.innerHTML = "";
                 let purse = document.createElement("p");
                 purse.innerHTML = "Purse: " + coins;
                 purseinfo.append(purse);
               }
-
+              let levels = document.getElementById("averagelevel");
               let skillbars = document.getElementById("skills");
               skillbars.innerHTML = "";
               let n = 0;
@@ -284,10 +313,14 @@
                     "%";
                   selfbar.innerHTML = Math.round(skills.progress * 100) + "% ";
                   selfskillbar.appendChild(selfbar);
-                  n++;
+                  n += skills.level;
                 }
+                averagelevel = n / 9;
+                levels.innerHTML =
+                  "Average skill level: " + averagelevel.toFixed(2);
               } else {
                 skillbars.innerHTML = "Enable skills in the API to view skills";
+                levels.innerHTML = "";
               }
             }
           }
@@ -300,10 +333,10 @@
       "https://api.hypixel.net/skyblock/profile?key=d4eaf4e7-23aa-4196-9440-fe9af430f614&profile=" +
         profileid
     )
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         for (i in yourprofiles) {
           if (profilevalue.value == yourprofiles[i].cute_name) {
             selectedprofile = yourprofiles[i].profile_id;
@@ -327,12 +360,38 @@
               } else {
                 let bankinfo = document.getElementById("bankinfo");
                 bankinfo.innerHTML =
-                  "Enable banking in the API to viewa banking details";
+                  "Enable banking in the API to view banking details";
               }
             }
           }
         }
       });
+  }
+  function events() {
+    fetch("https://api.tftech.de/event")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        let date = data[5].start.replace("T", " ");
+        console.log(date);
+        console.log(getTimeRemaining(date));
+      });
+  }
+  function getTimeRemaining(endtime) {
+    var t = Date.parse(endtime) - Date.parse(new Date());
+    var seconds = Math.floor((t / 1000) % 60);
+    var minutes = Math.floor((t / 1000 / 60) % 60);
+    var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+    var days = Math.floor(t / (1000 * 60 * 60 * 24));
+    return {
+      total: t,
+      days: days,
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+    };
   }
   function reverseString(str) {
     let splitString = str.split("");
@@ -351,31 +410,6 @@
     color: white;
     overflow-x: hidden;
   }
-
-  .model {
-    position: absolute;
-    top: 0;
-    left: -1000px;
-    bottom: 0;
-    right: 0;
-    background-position: 50% 70%;
-    background-size: 60%;
-  }
-
-  #rank {
-    font-size: 30px;
-    text-decoration-color: white;
-  }
-
-  #profilebutton {
-    font-size: 30px;
-    text-decoration-color: white;
-  }
-
-  body {
-    font-family: "Roboto", sans-serif;
-    margin: 48px;
-  }
   header {
     background-color: rgb(40, 40, 40);
     /* background-color: gray;  */
@@ -388,24 +422,10 @@
     z-index: 1000;
     position: fixed;
   }
-  /* position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 48px;
-    background-color: #A6145D;
-    z-index: 1000;
-    line-height: 48px; */
-
-  #playersinprofile {
-    font-size: 30px;
+  body {
+    font-family: "Roboto", sans-serif;
+    margin: 48px;
   }
-
-  #armoricon {
-    width: 65px;
-    height: 65px;
-  }
-
   .wrapper {
     margin-right: auto;
     margin-left: auto;
@@ -414,7 +434,28 @@
     padding-left: 10px;
     position: relative;
   }
-
+  #lore {
+    width: 1000px;
+    top: 50px;
+    position: relative;
+  }
+  #armoricon {
+    width: 65px;
+    height: 65px;
+  }
+  #name {
+    height: 2em;
+    width: 20em;
+    max-width: 100%;
+    padding-left: 0.5em;
+  }
+  #search-button:hover {
+    font-size: 20px;
+  }
+  input[type="button"] {
+    font-family: "Roboto", sans-serif;
+    font-size: 15px;
+  }
   input[type="text"] {
     border: 1.5px solid rgba(128, 128, 128, 0.3);
     border-radius: 4px;
@@ -428,37 +469,31 @@
   input[type="text"]:focus {
     border-color: rgba(128, 128, 128, 0.8);
   }
-
-  #name {
-    height: 2em;
-    width: 20em;
-    max-width: 100%;
-    padding-left: 0.5em;
-  }
-
-  input[type="button"] {
-    font-family: "Roboto", sans-serif;
-    font-size: 15px;
-  }
-
   select {
     font-family: "Roboto", sans-serif;
     padding: 0px 20px;
     margin: 10px;
     display: none;
   }
-
-  #search-button:hover {
-    font-size: 20px;
-  }
-
   p:hover p {
     display: block;
   }
-
   p > p {
     display: none;
     color: cyan;
+  }
+  .model {
+    position: absolute;
+    top: 0;
+    left: -1000px;
+    bottom: 0;
+    right: 0;
+    background-position: 50% 70%;
+    background-size: 60%;
+  }
+  .text {
+    font-size: 30px;
+    text-decoration-color: white;
   }
   .skill-bar {
     text-align: center;
@@ -498,3 +533,12 @@
     background-color: #555555;
   }
 </style>
+
+<!-- { '§0': 'color:#000000', '§1': 'color:#0000AA', '§2': 'color:#00AA00', '§3':
+'color:#00AAAA', '§4': 'color:#AA0000', '§5': 'color:#AA00AA', '§6':
+'color:#FFAA00', '§7': 'color:#AAAAAA', '§8': 'color:#555555', '§9':
+'color:#5555FF', '§a': 'color:#55FF55', '§b': 'color:#55FFFF', '§c':
+'color:#FF5555', '§d': 'color:#FF55FF', '§e': 'color:#FFFF55', '§f':
+'color:#FFFFFF', '§l': 'font-weight:bold', '§m': 'text-decoration:line-through',
+'§n': 'text-decoration:underline', '§o': 'font-style:italic' }; Minecraft Color
+Codes -->
