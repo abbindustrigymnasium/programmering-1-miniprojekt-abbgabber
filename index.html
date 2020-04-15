@@ -28,6 +28,10 @@
       <a>
         <i onclick="getstats(1)" id="search-button" class="fas fa-search"></i>
       </a>
+      <a>
+        <i onclick="events()" id="event-button" class="fas fa-calendar-alt"></i>
+      </a>
+      <div id="events"></div>
     </div>
   </header>
   <body>
@@ -45,6 +49,7 @@
         <div id="playersinprofile" class="text"></div>
         <div id="playermodel"></div>
         <div id="armor"></div>
+        <div id="slayer"></div>
         <!-- <span>
           Special Thanks to Bingepoodle for beta testing!
         </span> -->
@@ -60,6 +65,7 @@
       getstats(1);
     }
   };
+  let toggle = false;
 
   function getstats(value) {
     name = document.getElementById("name").value;
@@ -129,8 +135,8 @@
                 option.innerHTML = cuteNames;
                 option.id = profileid;
                 profilebutton.appendChild(option);
-                events();
               }
+              // events();
               findProfileMembers();
               getPlayerItems();
               getBanking(profileid);
@@ -145,6 +151,7 @@
         console.error("Error:" + error);
       });
   }
+
   function findProfileMembers() {
     let ProfileName = cuteNames;
     let profilevalue = document.getElementById("profilebutton");
@@ -168,6 +175,7 @@
         }
       });
   }
+
   function getPlayerItems() {
     let ProfileName = cuteNames;
     let profilevalue = document.getElementById("profilebutton");
@@ -180,11 +188,13 @@
         return response.json();
       })
       .then((data) => {
+        let yourplayer = "";
         for (i in data.members) {
           profilemembers = data.members[i].player.username;
           if (name.toLowerCase() == profilemembers.toLowerCase()) {
             if (ProfileName == profilevalue.value) {
               armor = data.members[i].armor;
+              yourplayer = data.members[i];
 
               for (var x = armor.length - 1; 0 <= x; x--) {
                 if (armor[x].name !== undefined) {
@@ -286,7 +296,7 @@
                 purseinfo.innerHTML = "";
                 let purse = document.createElement("p");
                 purse.innerHTML = "Purse: " + coins;
-                purseinfo.append(purse);
+                purseinfo.appendChild(purse);
               }
               let levels = document.getElementById("averagelevel");
               let skillbars = document.getElementById("skills");
@@ -325,8 +335,26 @@
             }
           }
         }
+        if (yourplayer !== undefined) {
+          getSlayers(yourplayer);
+        }
       });
   }
+
+  function getSlayers(data) {
+    let slayers = document.getElementById("slayer");
+    let slayerlevels = document.createElement("p");
+    for (x in data.slayer) {
+      console.log(data.slayer[x]);
+      slayerlevels.innerHTML =
+        x.charAt(0).toUpperCase() +
+        x.slice(1) +
+        ": " +
+        data.slayer[x].claimed_levels;
+      slayers.appendChild(slayerlevels);
+    }
+  }
+
   function getBanking(profileid) {
     let profilevalue = document.getElementById("profilebutton");
     fetch(
@@ -356,7 +384,7 @@
                 let bank = document.createElement("p");
                 bank.innerHTML = "Bank: " + bankcoins;
                 bank.id = "bankinfo";
-                bankinfo.append(bank);
+                bankinfo.appendChild(bank);
               } else {
                 let bankinfo = document.getElementById("bankinfo");
                 bankinfo.innerHTML =
@@ -367,18 +395,50 @@
         }
       });
   }
+
   function events() {
-    fetch("https://api.tftech.de/event")
+    fetch("https://api.tftech.de/event/2")
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
-        let date = data[5].start.replace("T", " ");
-        console.log(date);
-        console.log(getTimeRemaining(date));
+        let nextEvent = document.getElementById("events");
+        if (toggle == false) {
+          let nextEvent = document.getElementById("events");
+          nextEvent.innerHTML = "";
+          for (x in data) {
+            let upcomingEvents = document.createElement("p");
+            let date = data[x].start.replace("T", " ");
+            secondsLeft = getTimeRemaining(date).seconds;
+            minutesLeft = getTimeRemaining(date).minutes;
+            hoursLeft = getTimeRemaining(date).hours;
+            daysLeft = getTimeRemaining(date).days;
+            message = "";
+            if (daysLeft !== 0) {
+              message += daysLeft + " days ";
+            }
+            if (hoursLeft !== 0) {
+              message += hoursLeft + " hours ";
+            }
+            if (minutesLeft !== 0) {
+              message += minutesLeft + " minutes and ";
+            }
+            message +=
+              secondsLeft + " seconds left until the " + data[x].name + "!";
+            upcomingEvents.innerHTML = message;
+            upcomingEvents.style = "margin:10px";
+            nextEvent.className = "border";
+            nextEvent.appendChild(upcomingEvents);
+            toggle = true;
+          }
+        } else {
+          nextEvent.innerHTML = "";
+          nextEvent.className = "";
+          toggle = false;
+        }
       });
   }
+
   function getTimeRemaining(endtime) {
     var t = Date.parse(endtime) - Date.parse(new Date());
     var seconds = Math.floor((t / 1000) % 60);
@@ -393,6 +453,7 @@
       seconds: seconds,
     };
   }
+
   function reverseString(str) {
     let splitString = str.split("");
     let reverseArray = splitString.reverse();
@@ -451,6 +512,14 @@
   }
   #search-button:hover {
     font-size: 20px;
+  }
+  #event-button {
+    float: right;
+    font-size: 20px;
+  }
+  #events {
+    float: right;
+    background-color: rgb(40, 40, 40);
   }
   input[type="button"] {
     font-family: "Roboto", sans-serif;
@@ -542,3 +611,15 @@
 'color:#FFFFFF', '§l': 'font-weight:bold', '§m': 'text-decoration:line-through',
 '§n': 'text-decoration:underline', '§o': 'font-style:italic' }; Minecraft Color
 Codes -->
+
+<!-- slayerXP: {
+            1: 5,
+            2: 15,
+            3: 200,
+            4: 1000,
+            5: 5000,
+            6: 20000,
+            7: 100000,
+            8: 400000,
+            9: 1000000
+        }, -->
