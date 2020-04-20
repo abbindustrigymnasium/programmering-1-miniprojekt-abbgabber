@@ -40,16 +40,16 @@
         <div id="purseinfo"></div>
         <div id="bankinfo"></div>
         <div id="averagelevel"></div>
+        <div id="slayer"></div>
       </div>
       <div id="skills"></div>
       <div id="profiles"></div>
       <div style="position: relative; left: 700px; top: 200px;">
         <p id="rank" class="text"></p>
         <select id="profilebutton" onChange="getstats()" class="text"></select>
-        <div id="playersinprofile" class="text"></div>
+        <div id="playersinprofile" class="text item"></div>
         <div id="playermodel"></div>
         <div id="armor"></div>
-        <div id="slayer"></div>
         <!-- <span>
           Special Thanks to Bingepoodle for beta testing!
         </span> -->
@@ -68,6 +68,8 @@
   let toggle = false;
 
   function getstats(value) {
+    slayers = document.getElementById("slayer");
+    slayers.innerHTML = "";
     name = document.getElementById("name").value;
     yourprofiles = "";
     playerprofiles = [];
@@ -167,8 +169,9 @@
           profilemembers = data.members[i].player.username;
           if (name.toLowerCase() !== profilemembers.toLowerCase()) {
             if (ProfileName == profilevalue.value) {
-              let pprof = document.createElement("p");
+              let pprof = document.createElement("span");
               pprof.innerHTML = profilemembers;
+              pprof.style.marginRight = "10px";
               playersinprofile.appendChild(pprof);
             }
           }
@@ -294,7 +297,7 @@
 
                 let purseinfo = document.getElementById("purseinfo");
                 purseinfo.innerHTML = "";
-                let purse = document.createElement("p");
+                let purse = document.createElement("span");
                 purse.innerHTML = "Purse: " + coins;
                 purseinfo.appendChild(purse);
               }
@@ -343,13 +346,13 @@
 
   function getSlayers(data) {
     let slayers = document.getElementById("slayer");
-    let slayerlevels = document.createElement("p");
     for (x in data.slayer) {
-      console.log(data.slayer[x]);
+      let slayerlevels = document.createElement("span");
+      slayerlevels.style.marginRight = "10px";
       slayerlevels.innerHTML =
         x.charAt(0).toUpperCase() +
         x.slice(1) +
-        ": " +
+        ": Level " +
         data.slayer[x].claimed_levels;
       slayers.appendChild(slayerlevels);
     }
@@ -381,7 +384,7 @@
 
                 let bankinfo = document.getElementById("bankinfo");
                 bankinfo.innerHTML = "";
-                let bank = document.createElement("p");
+                let bank = document.createElement("span");
                 bank.innerHTML = "Bank: " + bankcoins;
                 bank.id = "bankinfo";
                 bankinfo.appendChild(bank);
@@ -494,6 +497,10 @@
     padding-right: 10px;
     padding-left: 10px;
     position: relative;
+  }
+  .item > span {
+    display: block;
+    word-break: normal;
   }
   #lore {
     width: 1000px;
