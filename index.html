@@ -6,6 +6,7 @@
       src="https://kit.fontawesome.com/6ed1fedfeb.js"
       crossorigin="anonymous"
     ></script>
+    <script src="constants.js"></script>
     <link
       href="https://pbs.twimg.com/profile_images/1082701131510370304/PkO4h8Cn_400x400.jpg"
       rel="icon"
@@ -50,6 +51,7 @@
         <div id="playersinprofile" class="text item"></div>
         <div id="playermodel"></div>
         <div id="armor"></div>
+
         <!-- <span>
           Special Thanks to Bingepoodle for beta testing!
         </span> -->
@@ -67,6 +69,7 @@
   };
   let toggle = false;
 
+  // Gets the profileid for the player and runs all the other fuctions
   function getstats(value) {
     slayers = document.getElementById("slayer");
     slayers.innerHTML = "";
@@ -92,6 +95,7 @@
 
           // Adds the Model of the Player
           playeruuid = data.player.uuid;
+          // console.log(playeruuid);
           let img = document.createElement("img");
           img.src = "https://visage.surgeplay.com/full/832/" + playeruuid;
           img.className = "model";
@@ -138,14 +142,13 @@
                 option.id = profileid;
                 profilebutton.appendChild(option);
               }
-              // events();
-              findProfileMembers();
-              getPlayerItems();
+              findProfileMembers(playeruuid);
+              getPlayerItems(playeruuid);
               getBanking(profileid);
             }
           }
         } else {
-          // document.getElementById("playermodel").innerHTML = "";
+          document.getElementById("playermodel").innerHTML = "";
           console.log("Unable to find Profile");
         }
       })
@@ -154,12 +157,15 @@
       });
   }
 
-  function findProfileMembers() {
+  function findProfileMembers(playeruuid) {
     let ProfileName = cuteNames;
     let profilevalue = document.getElementById("profilebutton");
     profilevalue.style.display = "block";
     fetch(
-      "https://api.slothpixel.me/api/skyblock/profile/" + name + "/" + profileid
+      "https://api.slothpixel.me/api/skyblock/profile/" +
+        playeruuid +
+        "/" +
+        profileid
     )
       .then((response) => {
         return response.json();
@@ -167,7 +173,7 @@
       .then((data) => {
         for (i in data.members) {
           profilemembers = data.members[i].player.username;
-          if (name.toLowerCase() !== profilemembers.toLowerCase()) {
+          if (playeruuid.toLowerCase() !== profilemembers.toLowerCase()) {
             if (ProfileName == profilevalue.value) {
               let pprof = document.createElement("span");
               pprof.innerHTML = profilemembers;
@@ -179,13 +185,17 @@
       });
   }
 
-  function getPlayerItems() {
+  // Adds the players items
+  function getPlayerItems(playeruuid) {
     let ProfileName = cuteNames;
     let profilevalue = document.getElementById("profilebutton");
     let armour = document.getElementById("armor");
     armour.innerHTML = "  ";
     fetch(
-      "https://api.slothpixel.me/api/skyblock/profile/" + name + "/" + profileid
+      "https://api.slothpixel.me/api/skyblock/profile/" +
+        playeruuid +
+        "/" +
+        profileid
     )
       .then((response) => {
         return response.json();
@@ -193,8 +203,8 @@
       .then((data) => {
         let yourplayer = "";
         for (i in data.members) {
-          profilemembers = data.members[i].player.username;
-          if (name.toLowerCase() == profilemembers.toLowerCase()) {
+          profilemembers = data.members[i].player.uuid;
+          if (playeruuid.toLowerCase() == profilemembers.toLowerCase()) {
             if (ProfileName == profilevalue.value) {
               armor = data.members[i].armor;
               yourplayer = data.members[i];
@@ -237,6 +247,7 @@
                   armourimg.appendChild(itemname);
                 }
               }
+
               // Adds the Item of the first slot to the page
               if (data.members[i].inventory !== null) {
                 // for (k in data.members[i].inventory) {
@@ -246,40 +257,41 @@
                 //   console.log(data.members[i].inventory);
                 //   weapon = data.members[i].inventory[k];
                 //Deactivate
-                weapon = data.members[i].inventory[0];
+                if (data.members[i].inventory[0] !== undefined) {
+                  weapon = data.members[i].inventory[0];
+                  let weapp = document.createElement("p");
+                  let rarity = weapon.lore
+                    .slice(-1)[0]
+                    .substring(4)
+                    .split(" ")[0]
+                    .toLowerCase();
+                  weapp.className = "piece" + " " + rarity;
+                  weapp.id = weapon.attributes.id;
+                  armour.appendChild(weapp);
 
-                let weapp = document.createElement("p");
-                let rarity = weapon.lore
-                  .slice(-1)[0]
-                  .substring(4)
-                  .split(" ")[0]
-                  .toLowerCase();
-                weapp.className = "piece" + " " + rarity;
-                weapp.id = weapon.attributes.id;
+                  // Adds the image of the item
+                  let weaponimg = document.getElementById(weapon.attributes.id);
+                  yourweapon = weapon.attributes.id;
+                  weaponsource =
+                    "assets/resources/" + yourweapon.toLowerCase() + ".png";
+                  let wimage = document.createElement("img");
+                  wimage.id = "armoricon";
+                  wimage.style = "float:left";
+                  wimage.src = weaponsource;
+                  weaponimg.appendChild(wimage);
 
-                armour.appendChild(weapp);
-
-                let weaponimg = document.getElementById(weapon.attributes.id);
-                yourweapon = weapon.attributes.id;
-                weaponsource =
-                  "assets/resources/" + yourweapon.toLowerCase() + ".png";
-                let wimage = document.createElement("img");
-                wimage.id = "armoricon";
-                wimage.style = "float:left";
-                wimage.src = weaponsource;
-                weaponimg.appendChild(wimage);
-
-                for (y in weapon.lore) {
-                  let loretext = document.createElement("p");
-                  loretext.id = weapon.lore[y].slice(0, 5);
-                  loretext.innerHTML = weapon.lore[y];
-                  weaponimg.appendChild(loretext);
-                  // console.log(loretext);
+                  for (y in weapon.lore) {
+                    let loretext = document.createElement("p");
+                    loretext.innerHTML = weapon.lore[y];
+                    loretext.id = "lore";
+                    weaponimg.appendChild(loretext);
+                    // console.log(loretext);
+                  }
+                  let itemname = document.createElement("p");
+                  itemname.id = "lore";
+                  itemname.innerHTML = weapon.name.substring(2);
+                  armourimg.appendChild(itemname);
                 }
-                let itemname = document.createElement("p");
-                itemname.id = "lore";
-                itemname.innerHTML = weapon.name.substring(2);
-                armourimg.appendChild(itemname);
                 //   }
                 // }
               } else {
@@ -301,6 +313,7 @@
                 purse.innerHTML = "Purse: " + coins;
                 purseinfo.appendChild(purse);
               }
+              // Progressbar for skills
               let levels = document.getElementById("averagelevel");
               let skillbars = document.getElementById("skills");
               skillbars.innerHTML = "";
@@ -346,15 +359,17 @@
 
   function getSlayers(data) {
     let slayers = document.getElementById("slayer");
-    for (x in data.slayer) {
-      let slayerlevels = document.createElement("span");
-      slayerlevels.style.marginRight = "10px";
-      slayerlevels.innerHTML =
-        x.charAt(0).toUpperCase() +
-        x.slice(1) +
-        ": Level " +
-        data.slayer[x].claimed_levels;
-      slayers.appendChild(slayerlevels);
+    if (data.slayer !== undefined) {
+      for (x in data.slayer) {
+        let slayerlevels = document.createElement("span");
+        slayerlevels.style.marginRight = "10px";
+        slayerlevels.innerHTML =
+          x.charAt(0).toUpperCase() +
+          x.slice(1) +
+          ": Level " +
+          data.slayer[x].claimed_levels;
+        slayers.appendChild(slayerlevels);
+      }
     }
   }
 
@@ -609,24 +624,3 @@
     background-color: #555555;
   }
 </style>
-
-<!-- { '§0': 'color:#000000', '§1': 'color:#0000AA', '§2': 'color:#00AA00', '§3':
-'color:#00AAAA', '§4': 'color:#AA0000', '§5': 'color:#AA00AA', '§6':
-'color:#FFAA00', '§7': 'color:#AAAAAA', '§8': 'color:#555555', '§9':
-'color:#5555FF', '§a': 'color:#55FF55', '§b': 'color:#55FFFF', '§c':
-'color:#FF5555', '§d': 'color:#FF55FF', '§e': 'color:#FFFF55', '§f':
-'color:#FFFFFF', '§l': 'font-weight:bold', '§m': 'text-decoration:line-through',
-'§n': 'text-decoration:underline', '§o': 'font-style:italic' }; Minecraft Color
-Codes -->
-
-<!-- slayerXP: {
-            1: 5,
-            2: 15,
-            3: 200,
-            4: 1000,
-            5: 5000,
-            6: 20000,
-            7: 100000,
-            8: 400000,
-            9: 1000000
-        }, -->
