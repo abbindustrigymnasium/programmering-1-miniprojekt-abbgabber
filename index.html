@@ -318,7 +318,8 @@
               let skillbars = document.getElementById("skills");
               skillbars.innerHTML = "";
               let n = 0;
-              if (Object.keys(data.members[i].skills).length == 9) {
+              let skilldata = Object.keys(data.members[i].skills).length;
+              if (skilldata == 9 || skilldata == 10) {
                 for (x in data.members[i].skills) {
                   let skills = data.members[i].skills[x];
                   let bar = document.createElement("div");
@@ -341,7 +342,7 @@
                   selfskillbar.appendChild(selfbar);
                   n += skills.level;
                 }
-                averagelevel = n / 9;
+                averagelevel = n / skilldata;
                 levels.innerHTML =
                   "Average skill level: " + averagelevel.toFixed(2);
               } else {
@@ -444,7 +445,12 @@
             message +=
               secondsLeft + " seconds left until the " + data[x].name + "!";
             upcomingEvents.innerHTML = message;
-            upcomingEvents.style = "margin:10px";
+            upcomingEvents.className = "eventText";
+            if (data[x].color != "272727") {
+              upcomingEvents.style.color = "#" + data[x].color;
+            } else {
+              upcomingEvents.style.color = "#8a8a8a";
+            }
             nextEvent.className = "border";
             nextEvent.appendChild(upcomingEvents);
             toggle = true;
@@ -592,6 +598,9 @@
   .border {
     border: 2px solid rgba(128, 128, 128, 0.3);
     border-radius: 4px;
+  }
+  .eventText {
+    margin: 10px;
   }
   .piece {
     display: inline-block;
