@@ -451,24 +451,51 @@
           nextEvent.innerHTML = "";
           for (x in data) {
             let upcomingEvents = document.createElement("p");
-            let date = data[x].start.replace("T", " ");
-            secondsLeft = getTimeRemaining(date).seconds;
-            minutesLeft = getTimeRemaining(date).minutes;
-            hoursLeft = getTimeRemaining(date).hours;
-            daysLeft = getTimeRemaining(date).days;
-            message = "";
-            if (daysLeft !== 0) {
-              message += daysLeft + " days ";
+            let startDate = data[x].start.replace("T", " ");
+            timeLeft = getTimeRemaining(startDate);
+
+            if (timeLeft.total > 0) {
+              secondsLeft = timeLeft.seconds;
+              minutesLeft = timeLeft.minutes;
+              hoursLeft = timeLeft.hours;
+              daysLeft = timeLeft.days;
+              message = "";
+              if (daysLeft !== 0) {
+                message += daysLeft + " days ";
+              }
+              if (hoursLeft !== 0) {
+                message += hoursLeft + " hours ";
+              }
+              if (minutesLeft !== 0) {
+                message += minutesLeft + " minutes and ";
+              }
+              message +=
+                secondsLeft + " seconds left until the " + data[x].name + "!";
+              upcomingEvents.innerHTML = message;
+            } else if (data[x].end !== null) {
+              let messages = data[x].name + " ends in ";
+              let endDate = data[x].end.replace("T", " ");
+              endTimeLeft = getTimeRemaining(endDate);
+
+              endsecondsLeft = endTimeLeft.seconds;
+              endminutesLeft = endTimeLeft.minutes;
+              endhoursLeft = endTimeLeft.hours;
+              enddaysLeft = endTimeLeft.days;
+
+              if (enddaysLeft !== 0) {
+                messages += enddaysLeft + " days ";
+              }
+              if (endhoursLeft !== 0) {
+                messages += endhoursLeft + " hours ";
+              }
+              if (endminutesLeft !== 0) {
+                messages += endminutesLeft + " minutes and ";
+              }
+              messages += endsecondsLeft;
+              upcomingEvents.innerHTML = messages;
+            } else {
+              upcomingEvents.innerHTML = data[x].name + "is happening now!";
             }
-            if (hoursLeft !== 0) {
-              message += hoursLeft + " hours ";
-            }
-            if (minutesLeft !== 0) {
-              message += minutesLeft + " minutes and ";
-            }
-            message +=
-              secondsLeft + " seconds left until the " + data[x].name + "!";
-            upcomingEvents.innerHTML = message;
             upcomingEvents.className = "eventText";
             if (data[x].color != "272727") {
               upcomingEvents.style.color = "#" + data[x].color;
@@ -488,11 +515,11 @@
   }
 
   function getTimeRemaining(endtime) {
-    var t = Date.parse(endtime) - Date.parse(new Date());
-    var seconds = Math.floor((t / 1000) % 60);
-    var minutes = Math.floor((t / 1000 / 60) % 60);
-    var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-    var days = Math.floor(t / (1000 * 60 * 60 * 24));
+    let t = Date.parse(endtime) - new Date().getTime();
+    let days = Math.floor(t / (1000 * 60 * 60 * 24));
+    let hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((t % (1000 * 60)) / 1000);
     return {
       total: t,
       days: days,
