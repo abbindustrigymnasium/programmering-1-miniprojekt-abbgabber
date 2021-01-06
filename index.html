@@ -7,6 +7,7 @@
       crossorigin="anonymous"
     ></script>
     <script src="constants.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <link
       href="https://pbs.twimg.com/profile_images/1082701131510370304/PkO4h8Cn_400x400.jpg"
       rel="icon"
@@ -37,11 +38,12 @@
   </header>
   <body>
     <div class="wrapper">
-      <div id="infocard">
+      <div id="infocard" class="infocard">
         <div id="purseinfo"></div>
         <div id="bankinfo"></div>
         <div id="averagelevel"></div>
         <div id="slayer"></div>
+        <div id="fairysouls"></div>
       </div>
       <div id="skills"></div>
       <div id="profiles"></div>
@@ -51,10 +53,9 @@
         <div id="playersinprofile" class="text item"></div>
         <div id="playermodel"></div>
         <div id="armor"></div>
-
-        <!-- <span>
-          Special Thanks to Bingepoodle for beta testing!
-        </span> -->
+        <button onclick="myFunction.call(this)" class="buttonClassA">
+          Button
+        </button>
       </div>
     </div>
   </body>
@@ -67,7 +68,7 @@
       getstats(1);
     }
   };
-  let toggle = false;
+  let toggler = false;
 
   // Gets the profileid for the player and runs all the other fuctions
   function getstats(value) {
@@ -156,7 +157,9 @@
         console.error("Error:" + error);
       });
   }
-
+  function myFunction() {
+    $(this).toggleClass("buttonClassB");
+  }
   function findProfileMembers(playeruuid) {
     let ProfileName = cuteNames;
     let profilevalue = document.getElementById("profilebutton");
@@ -206,8 +209,8 @@
           profilemembers = data.members[i].player.uuid;
           if (playeruuid.toLowerCase() == profilemembers.toLowerCase()) {
             if (ProfileName == profilevalue.value) {
-              armor = data.members[i].armor;
-              yourplayer = data.members[i];
+              let armor = data.members[i].armor;
+              let yourplayer = data.members[i];
 
               for (var x = armor.length - 1; 0 <= x; x--) {
                 if (armor[x].name !== undefined) {
@@ -313,13 +316,25 @@
                 purse.innerHTML = "Purse: " + coins;
                 purseinfo.appendChild(purse);
               }
+
+              // Fairy Souls
+              let fairyinfo = document.getElementById("fairysouls");
+              fairyinfo.innerHTML = "";
+              let fairy = document.createElement("span");
+              fairy.innerHTML =
+                "Fairy souls: " +
+                data.members[i].fairy_souls_collected +
+                " / 209";
+              fairyinfo.appendChild(fairy);
               // Progressbar for skills
               let levels = document.getElementById("averagelevel");
               let skillbars = document.getElementById("skills");
               skillbars.innerHTML = "";
               let n = 0;
+              let am = 0;
+              let lev = 0;
               let skilldata = Object.keys(data.members[i].skills).length;
-              if (skilldata == 9 || skilldata == 10) {
+              if (skilldata >= 9) {
                 for (x in data.members[i].skills) {
                   let skills = data.members[i].skills[x];
                   let bar = document.createElement("div");
@@ -363,21 +378,29 @@
                   procentbar.innerHTML =
                     Math.round(skills.progress * 100) + "% ";
                   selfskillbar.appendChild(procentbar);
-
-                  n += skills.level;
+                  if (x !== "runecrafting" && x != "carpentry") {
+                    n += skills.level;
+                    n += (skills.progress * 100) / 100;
+                    lev += skills.level;
+                    am++;
+                  }
                 }
-                averagelevel = n / skilldata;
+                averagelevel = n / am;
+                averagelevelprog = lev / am;
                 levels.innerHTML =
-                  "Average skill level: " + averagelevel.toFixed(2);
+                  "Average skill level: " +
+                  averagelevel.toFixed(2) +
+                  " Without progress: " +
+                  averagelevelprog.toFixed(2);
               } else {
                 skillbars.innerHTML = "Enable skills in the API to view skills";
                 levels.innerHTML = "";
               }
+              if (yourplayer !== undefined) {
+                getSlayers(yourplayer);
+              }
             }
           }
-        }
-        if (yourplayer !== undefined) {
-          getSlayers(yourplayer);
         }
       });
   }
@@ -446,7 +469,7 @@
       })
       .then((data) => {
         let nextEvent = document.getElementById("events");
-        if (toggle == false) {
+        if (toggler == true) {
           let nextEvent = document.getElementById("events");
           nextEvent.innerHTML = "";
           for (x in data) {
@@ -504,12 +527,12 @@
             }
             nextEvent.className = "border";
             nextEvent.appendChild(upcomingEvents);
-            toggle = true;
+            toggler = false;
           }
         } else {
           nextEvent.innerHTML = "";
           nextEvent.className = "";
-          toggle = false;
+          toggler = true;
         }
       });
   }
@@ -545,6 +568,7 @@
     font-family: "Roboto", sans-serif;
     color: white;
     overflow-x: hidden;
+    white-space: nowrap;
   }
   header {
     background-color: rgb(40, 40, 40);
@@ -583,6 +607,14 @@
     width: 65px;
     height: 65px;
   }
+
+  .buttonClassA {
+    color: burlywood;
+  }
+  .buttonClassB {
+    color: aqua;
+  }
+
   #name {
     height: 2em;
     width: 20em;
